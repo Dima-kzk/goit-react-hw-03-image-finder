@@ -70,13 +70,13 @@ class App extends Component {
     return largeImageURL;
   };
 
-  handleKeyBoard = e => {
-    if (e.key === 'Escape') {
-      this.setState(prevState => {
-        if (prevState.isVisibleModal) return { isVisibleModal: false };
-      });
-    }
-  };
+  // handleKeyBoard = e => {
+  //   if (e.key === 'Escape') {
+  //     this.setState(prevState => {
+  //       if (prevState.isVisibleModal) return { isVisibleModal: false };
+  //     });
+  //   }
+  // };
 
   render() {
     // if (window.onkeydown === null) window.onkeydown = this.handleKeyBoard;
@@ -104,5 +104,3 @@ class App extends Component {
 }
 
 export default App;
-
-//https://pixabay.com/api/?key=35695692-b29213b84af7336a869b1efb1&q=yellow+flowers&image_type=photo
