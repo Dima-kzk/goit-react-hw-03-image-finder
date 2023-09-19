@@ -22,7 +22,7 @@ class App extends Component {
     error: null,
   };
 
-  largeImageURL = null;
+  // largeImageURL = null;
 
   onSubmit = query => {
     if (query === this.state.query) return;
