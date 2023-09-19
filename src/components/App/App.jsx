@@ -79,7 +79,7 @@ class App extends Component {
   };
 
   render() {
-    if (window.onkeydown === null) window.onkeydown = this.handleKeyBoard;
+    // if (window.onkeydown === null) window.onkeydown = this.handleKeyBoard;
     return (
       <>
         <Grid>
