@@ -22,7 +22,7 @@ class App extends Component {
     error: null,
   };
 
-  // largeImageURL = null;
+  largeImageURL = null;
 
   onSubmit = query => {
     if (query === this.state.query) return;
@@ -30,33 +30,33 @@ class App extends Component {
     this.setState({ images: [], query, page: 1 });
   };
 
-  // async componentDidUpdate(prevProps, prevState) {
-  //   try {
-  //     if (
-  //       prevState.query !== this.state.query ||
-  //       prevState.page !== this.state.page
-  //     ) {
-  //       if (!prevState.isLoading) this.setState({ isLoading: true });
+  async componentDidUpdate(prevProps, prevState) {
+    try {
+      if (
+        prevState.query !== this.state.query ||
+        prevState.page !== this.state.page
+      ) {
+        if (!prevState.isLoading) this.setState({ isLoading: true });
 
-  //       const response = await getImages(this.state.query, this.state.page);
+        const response = await getImages(this.state.query, this.state.page);
 
-  //       if (
-  //         prevState.page !== this.state.page &&
-  //         prevState.query === this.state.query
-  //       ) {
-  //         this.setState({
-  //           images: [...prevState.images, ...response.data.hits],
-  //         });
-  //       } else if (prevState.query !== this.state.query) {
-  //         this.setState({ images: response.data.hits });
-  //       }
-  //     }
-  //   } catch (error) {
-  //     this.setState({ error });
-  //   } finally {
-  //     if (prevState.isLoading) this.setState({ isLoading: false });
-  //   }
-  // }
+        if (
+          prevState.page !== this.state.page &&
+          prevState.query === this.state.query
+        ) {
+          this.setState({
+            images: [...prevState.images, ...response.data.hits],
+          });
+        } else if (prevState.query !== this.state.query) {
+          this.setState({ images: response.data.hits });
+        }
+      }
+    } catch (error) {
+      this.setState({ error });
+    } finally {
+      if (prevState.isLoading) this.setState({ isLoading: false });
+    }
+  }
 
   handleLoadMore = () => {
     this.setState(prevState => ({ page: prevState.page + 1 }));
