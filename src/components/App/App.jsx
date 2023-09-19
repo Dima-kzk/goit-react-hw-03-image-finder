@@ -1,6 +1,5 @@
 import Searchbar from 'components/Searchbar';
 import { Grid } from './App.styled';
-// import axios from 'axios';
 import ImageGallery from 'components/ImageGallery';
 import Button from 'components/Button';
 import Loader from 'components/Loader';
@@ -9,8 +8,6 @@ import Modal from 'components/Modal';
 import getImages from '../../helper/api';
 
 const { Component } = require('react');
-
-// axios.defaults.baseURL = 'https://pixabay.com/api/';
 
 class App extends Component {
   state = {
@@ -70,16 +67,15 @@ class App extends Component {
     return largeImageURL;
   };
 
-  // handleKeyBoard = e => {
-  //   if (e.key === 'Escape') {
-  //     this.setState(prevState => {
-  //       if (prevState.isVisibleModal) return { isVisibleModal: false };
-  //     });
-  //   }
-  // };
+  handleKeyBoard = e => {
+    if (e.key === 'Escape') {
+      this.setState(prevState => {
+        if (prevState.isVisibleModal) return { isVisibleModal: false };
+      });
+    }
+  };
 
   render() {
-    // if (window.onkeydown === null) window.onkeydown = this.handleKeyBoard;
     return (
       <>
         <Grid>
