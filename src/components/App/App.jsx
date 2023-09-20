@@ -27,6 +27,14 @@ class App extends Component {
     this.setState({ images: [], query, page: 1 });
   };
 
+  componentDidMount() {
+    document.addEventListener('keydown', this.handleKeyBoard);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('keydown', this.handleKeyBoard);
+  }
+
   async componentDidUpdate(prevProps, prevState) {
     try {
       if (
@@ -63,8 +71,6 @@ class App extends Component {
     this.setState(prevState => ({ isVisibleModal: !prevState.isVisibleModal }));
 
     this.largeImageURL = largeImageURL;
-
-    return largeImageURL;
   };
 
   handleKeyBoard = e => {
