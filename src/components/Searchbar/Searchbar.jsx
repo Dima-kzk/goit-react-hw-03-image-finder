@@ -13,6 +13,9 @@ export default class Searchbar extends Component {
 
   handleSubmit = event => {
     event.preventDefault();
+    if (this.state.query.trim() === '') {
+      return alert('Не можна зробити запит по пустій квері');
+    }
     this.props.onSubmit(this.state.query);
     this.setState({ query: '' });
   };

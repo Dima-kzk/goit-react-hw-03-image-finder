@@ -19,7 +19,7 @@ class App extends Component {
     error: null,
   };
 
-  largeImageURL = null;
+  isVisibleButton = true;
 
   onSubmit = query => {
     if (query === this.state.query) return;
@@ -27,33 +27,36 @@ class App extends Component {
     this.setState({ images: [], query, page: 1 });
   };
 
-  componentDidMount() {
-    document.addEventListener('keydown', this.handleKeyBoard);
-  }
-
-  componentWillUnmount() {
-    document.removeEventListener('keydown', this.handleKeyBoard);
-  }
+  setIsVisibleModal = v => {};
 
   async componentDidUpdate(prevProps, prevState) {
     try {
       if (
+        // це умова якщо змінюється або query або page
         prevState.query !== this.state.query ||
         prevState.page !== this.state.page
       ) {
+        // це для організації приховання кнопки та відображення Loader під час загрузки
         if (!prevState.isLoading) this.setState({ isLoading: true });
 
-        const response = await getImages(this.state.query, this.state.page);
+        const { hits, totalHits } = (
+          await getImages(this.state.query, this.state.page)
+        ).data;
+
+        this.isVisibleButton = this.state.page < Math.ceil(totalHits / 12);
 
         if (
+          // це умова коли page змінився, а query - ні
           prevState.page !== this.state.page &&
           prevState.query === this.state.query
         ) {
           this.setState({
-            images: [...prevState.images, ...response.data.hits],
+            // тоді до існуючої колекції додаємо нову порцію із запиту
+            images: [...prevState.images, ...hits],
           });
+          // це умова коли змінився соме query
         } else if (prevState.query !== this.state.query) {
-          this.setState({ images: response.data.hits });
+          this.setState({ images: hits }); // тоді створюємо нову колекцію по новому query
         }
       }
     } catch (error) {
@@ -67,18 +70,10 @@ class App extends Component {
     this.setState(prevState => ({ page: prevState.page + 1 }));
   };
 
-  toggleModal = largeImageURL => {
+  toggleModal = (largeImageURL = null) => {
     this.setState(prevState => ({ isVisibleModal: !prevState.isVisibleModal }));
 
     this.largeImageURL = largeImageURL;
-  };
-
-  handleKeyBoard = e => {
-    if (e.key === 'Escape') {
-      this.setState(prevState => {
-        if (prevState.isVisibleModal) return { isVisibleModal: false };
-      });
-    }
   };
 
   render() {
@@ -91,6 +86,7 @@ class App extends Component {
             <p>Whoops, something went wrong: {this.state.error.message}</p>
           )}
           {this.state.images.length > 0 &&
+            this.isVisibleButton &&
             (this.state.isLoading ? (
               <Loader />
             ) : (
@@ -98,7 +94,7 @@ class App extends Component {
             ))}
         </Grid>
         {this.state.isVisibleModal && (
-          <Modal src={this.largeImageURL} onClick={this.toggleModal} />
+          <Modal src={this.largeImageURL} toggleModal={this.toggleModal} />
         )}
       </>
     );
