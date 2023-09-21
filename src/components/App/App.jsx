@@ -18,6 +18,7 @@ class App extends Component {
     isVisibleModal: false,
     error: null,
     isVisibleButton: true,
+    largeImageURL: '',
   };
 
   onSubmit = query => {
@@ -26,53 +27,43 @@ class App extends Component {
     this.setState({ images: [], query, page: 1 });
   };
 
-  setIsVisibleModal = v => {};
+  componentDidUpdate(prevProps, prevState) {
+    const { query, page } = this.state;
+    if (
+      prevState.query !== this.state.query ||
+      prevState.page !== this.state.page
+    )
+      this.getPhotos(query, page);
+  }
 
-  async componentDidUpdate(prevProps, prevState) {
+  getPhotos = async (query, page) => {
+    this.setState({ isLoading: true });
+
     try {
-      if (
-        // це умова якщо змінюється або query або page
-        prevState.query !== this.state.query ||
-        prevState.page !== this.state.page
-      ) {
-        // це для організації приховання кнопки та відображення Loader під час загрузки
-        if (!prevState.isLoading) this.setState({ isLoading: true });
-
-        const { hits, totalHits } = (
-          await getImages(this.state.query, this.state.page)
-        ).data;
-
-        this.isVisibleButton = this.state.page < Math.ceil(totalHits / 12);
-
-        if (
-          // це умова коли page змінився, а query - ні
-          prevState.page !== this.state.page &&
-          prevState.query === this.state.query
-        ) {
-          this.setState({
-            // тоді до існуючої колекції додаємо нову порцію із запиту
-            images: [...prevState.images, ...hits],
-          });
-          // це умова коли змінився соме query
-        } else if (prevState.query !== this.state.query) {
-          this.setState({ images: hits }); // тоді створюємо нову колекцію по новому query
-        }
+      const { hits, totalHits } = (await getImages(query, page)).data;
+      if (hits.length === 0) {
+        return alert(`We dont find ${query}`);
       }
+      this.setState(prevState => ({
+        images: [...prevState.images, ...hits],
+        isVisibleButton: this.state.page < Math.ceil(totalHits / 12),
+      }));
     } catch (error) {
       this.setState({ error });
     } finally {
-      if (prevState.isLoading) this.setState({ isLoading: false });
+      this.setState({ isLoading: false });
     }
-  }
+  };
 
   handleLoadMore = () => {
     this.setState(prevState => ({ page: prevState.page + 1 }));
   };
 
-  toggleModal = (largeImageURL = null) => {
-    this.setState(prevState => ({ isVisibleModal: !prevState.isVisibleModal }));
-
-    this.largeImageURL = largeImageURL;
+  toggleModal = largeImageURL => {
+    this.setState(prevState => ({
+      isVisibleModal: !prevState.isVisibleModal,
+      largeImageURL,
+    }));
   };
 
   render() {
@@ -80,12 +71,17 @@ class App extends Component {
       <>
         <Grid>
           <Searchbar onSubmit={this.onSubmit} />
-          <ImageGallery images={this.state.images} onClick={this.toggleModal} />
+          {this.state.images.length > 0 && (
+            <ImageGallery
+              images={this.state.images}
+              onClick={this.toggleModal}
+            />
+          )}
           {this.state.error && (
             <p>Whoops, something went wrong: {this.state.error.message}</p>
           )}
           {this.state.images.length > 0 &&
-            this.isVisibleButton &&
+            this.state.isVisibleButton &&
             (this.state.isLoading ? (
               <Loader />
             ) : (
@@ -93,7 +89,10 @@ class App extends Component {
             ))}
         </Grid>
         {this.state.isVisibleModal && (
-          <Modal src={this.largeImageURL} toggleModal={this.toggleModal} />
+          <Modal
+            src={this.state.largeImageURL}
+            toggleModal={this.toggleModal}
+          />
         )}
       </>
     );
