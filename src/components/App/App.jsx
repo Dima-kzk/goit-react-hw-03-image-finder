@@ -17,9 +17,8 @@ class App extends Component {
     isLoading: false,
     isVisibleModal: false,
     error: null,
+    isVisibleButton: true,
   };
-
-  isVisibleButton = true;
 
   onSubmit = query => {
     if (query === this.state.query) return;
@@ -77,6 +76,7 @@ class App extends Component {
   };
 
   render() {
+    console.log('render');
     return (
       <>
         <Grid>
