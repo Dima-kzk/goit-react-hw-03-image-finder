@@ -16,13 +16,7 @@ class Modal extends Component {
 
   render() {
     return (
-      <Overlay
-        className="overlay"
-        onClick={this.props.toggleModal}
-        onKeyDown={e => {
-          if (e.key === 'Escape') console.log(e.key);
-        }}
-      >
+      <Overlay className="overlay" onClick={this.props.toggleModal}>
         <div className="modal">
           <img src={this.props.src} alt="" onClick={e => e.stopPropagation()} />
         </div>
